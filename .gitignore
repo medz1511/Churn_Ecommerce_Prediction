@@ -1,0 +1,18 @@
+# Ignorer l'environnement virtuel (TRES IMPORTANT)
+etl_ecommerce/
+venv/
+.env
+
+# Ignorer les fichiers temporaires Python
+__pycache__/
+*.pyc
+
+# Ignorer les logs Airflow (inutile sur GitHub)
+logs/
+
+# Ignorer la base de données locale (inutile et lourd)
+*.db
+data/airflow.db
+
+# Optionnel : Si ton fichier data.csv fait +100Mo, décommente la ligne dessous
+# data/raw/data.csv

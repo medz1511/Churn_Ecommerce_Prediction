@@ -1,0 +1,37 @@
+version: '3'
+services:
+  airflow-webserver:
+    build: .
+    command: webserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./models:/opt/airflow/models
+      - ./logs:/opt/airflow/logs
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      # CHANGEMENT ICI : On met la DB dans le dossier 'data' pour qu'elle reste sur ton PC
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/data/airflow.db
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__SECRET_KEY=secret_key_projet_15
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+    user: "${AIRFLOW_UID:-50000}:0"
+
+  airflow-scheduler:
+    build: .
+    command: scheduler
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./models:/opt/airflow/models
+      - ./logs:/opt/airflow/logs
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      # CHANGEMENT ICI AUSSI
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/data/airflow.db
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__SECRET_KEY=secret_key_projet_15
+    user: "${AIRFLOW_UID:-50000}:0"
