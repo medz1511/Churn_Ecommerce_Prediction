@@ -27,10 +27,7 @@ def load_data():
 # --- FONCTION INTELLIGENTE : CHARGEMENT OU ENTRAINEMENT ---
 @st.cache_resource
 def get_model(df):
-    """
-    Tente de charger le modèle. S'il échoue (problème de version),
-    il ré-entraîne le modèle à la volée sur le Cloud.
-    """
+
     try:
         # 1. On essaie de charger le fichier existant
         model = joblib.load(MODEL_PATH)
@@ -38,8 +35,7 @@ def get_model(df):
         return model, scaler
         
     except Exception as e:
-        # 2. SI ÇA PLANTE : On active le plan B (Ré-entraînement)
-        # st.warning(f"⚠️ Le modèle pré-entraîné n'est pas compatible ({e}). Ré-entraînement automatique en cours...")
+       
         
         # Préparation des données
         X = df[['Recency', 'Frequency', 'Monetary']]

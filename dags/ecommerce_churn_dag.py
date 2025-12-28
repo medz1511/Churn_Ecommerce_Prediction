@@ -53,10 +53,7 @@ def churn_pipeline():
 
     @task()
     def feature_engineering(input_path: str):
-        """
-        Logique Avancée : Temporal Split
-        On apprend sur le passé (Observation) pour prédire le futur (Target)
-        """
+
         print("🔄 Création des features avec coupure temporelle...")
         df = pd.read_csv(input_path)
         df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
@@ -72,7 +69,7 @@ def churn_pipeline():
         print(f"   Transactions Futures : {len(future_data)}")
 
         # 2. Création des Features sur le PASSE uniquement
-        # La 'Recency' est calculée par rapport à la date de coupure (le 'présent' au moment de l'entraînement)
+       
         rfm = observation_data.groupby(['CustomerID']).agg({
             'InvoiceDate': lambda x: (cutoff - x.max()).days, # Jours entre dernier achat et la coupure
             'InvoiceNo': 'count',
@@ -80,11 +77,11 @@ def churn_pipeline():
         })
         rfm.rename(columns={'InvoiceDate': 'Recency', 'InvoiceNo': 'Frequency', 'TotalAmount': 'Monetary'}, inplace=True)
 
-        # 3. Création de la Target (La vérité terrain)
-        # Quels clients du passé ont acheté dans le futur ?
+        # 3. Création de la Target 
+        
         customers_who_returned = future_data['CustomerID'].unique()
         
-        # Si le client est dans 'future_data', Is_Churn = 0. Sinon Is_Churn = 1
+        
         rfm['Is_Churn'] = rfm.index.isin(customers_who_returned).astype(int)
         # On inverse la logique : isin = True (Resté) -> Churn = 0
         # Donc isin = False (Pas revenu) -> Churn = 1
@@ -103,7 +100,7 @@ def churn_pipeline():
         X = df[['Recency', 'Frequency', 'Monetary']]
         y = df['Is_Churn']
         
-        # Train/Test Split classique pour valider le modèle
+        
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
         scaler = StandardScaler()
